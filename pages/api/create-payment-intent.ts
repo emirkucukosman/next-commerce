@@ -9,8 +9,14 @@ const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { items } = req.body;
 
+  // Determine cookie name
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-next-auth.session-token"
+      : "next-auth.session-token";
+
   // Check if session token cookie is set
-  const sessionToken = req.cookies["next-auth.session-token"];
+  const sessionToken = req.cookies[cookieName];
   if (!sessionToken) {
     return res.status(401).json({ message: "Unauthorized" });
   }
