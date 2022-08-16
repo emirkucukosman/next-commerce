@@ -39,7 +39,15 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     };
   }
 
+  // Get the product by id
   const product = await getProductById(parseInt(context.params.id as string));
+
+  // If there is no product then return 404
+  if (!product) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {

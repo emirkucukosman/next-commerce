@@ -53,6 +53,13 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
     page ? parseInt(page as string) : 1
   );
 
+  // If there are no products then return 404
+  if (products.length === 0) {
+    return {
+      notFound: true,
+    };
+  }
+
   return {
     props: {
       // This is a workaround for Date objects because Next.js does not serialize them on server side for performance reasons
