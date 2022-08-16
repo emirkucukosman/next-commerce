@@ -93,7 +93,7 @@ export const Header = () => {
   const router = useRouter();
   const { classes } = useStyles();
   const { cart } = useCartStore();
-  const { data: session } = useSession();
+  const { data: session, status: sessionStatus } = useSession();
 
   return (
     <div className={classes.header}>
@@ -108,57 +108,59 @@ export const Header = () => {
             </a>
           </Link>
 
-          <Group spacing="xs">
-            {session ? (
-              <UserButton session={session} />
-            ) : (
-              <Button
-                component={NextLink}
-                href="/api/auth/signin"
-                variant="subtle"
-                leftIcon={<IconUserCircle size={16} />}
-                size="xs"
-                color="dark"
-                p={4}
-              >
-                Sign in
-              </Button>
-            )}
-            <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
-              <Button
-                component={NextLink}
-                href="/cart"
-                variant="subtle"
-                leftIcon={<IconShoppingCart size={16} />}
-                rightIcon={cart.length === 0 ? null : <Badge>{cart.length}</Badge>}
-                styles={{
-                  leftIcon: {
-                    marginRight: 4,
-                  },
-                }}
-                size="xs"
-                color="dark"
-              >
-                Cart
-              </Button>
-            </MediaQuery>
-            <MediaQuery largerThan="sm" styles={{ display: "none" }}>
-              <Button
-                component={NextLink}
-                href="/cart"
-                variant="subtle"
-                leftIcon={<IconShoppingCart size={16} />}
-                rightIcon={cart.length === 0 ? null : <Badge>{cart.length}</Badge>}
-                styles={{
-                  rightIcon: {
-                    marginLeft: 0,
-                  },
-                }}
-                size="xs"
-                color="dark"
-              />
-            </MediaQuery>
-          </Group>
+          {sessionStatus !== "loading" && (
+            <Group spacing="xs">
+              {session ? (
+                <UserButton session={session} />
+              ) : (
+                <Button
+                  component={NextLink}
+                  href="/api/auth/signin"
+                  variant="subtle"
+                  leftIcon={<IconUserCircle size={16} />}
+                  size="xs"
+                  color="dark"
+                  p={4}
+                >
+                  Sign in
+                </Button>
+              )}
+              <MediaQuery smallerThan="sm" styles={{ display: "none" }}>
+                <Button
+                  component={NextLink}
+                  href="/cart"
+                  variant="subtle"
+                  leftIcon={<IconShoppingCart size={16} />}
+                  rightIcon={cart.length === 0 ? null : <Badge>{cart.length}</Badge>}
+                  styles={{
+                    leftIcon: {
+                      marginRight: 4,
+                    },
+                  }}
+                  size="xs"
+                  color="dark"
+                >
+                  Cart
+                </Button>
+              </MediaQuery>
+              <MediaQuery largerThan="sm" styles={{ display: "none" }}>
+                <Button
+                  component={NextLink}
+                  href="/cart"
+                  variant="subtle"
+                  leftIcon={<IconShoppingCart size={16} />}
+                  rightIcon={cart.length === 0 ? null : <Badge>{cart.length}</Badge>}
+                  styles={{
+                    rightIcon: {
+                      marginLeft: 0,
+                    },
+                  }}
+                  size="xs"
+                  color="dark"
+                />
+              </MediaQuery>
+            </Group>
+          )}
         </Group>
       </Container>
       <Container>
