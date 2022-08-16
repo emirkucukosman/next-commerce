@@ -23,6 +23,8 @@ const CheckoutComplete: NextPage = () => {
     setIsSuccess(typeof redirectStatus === "string" && redirectStatus === "succeeded");
   }, []);
 
+  if (isSuccess === undefined) return <div>Loading...</div>;
+
   return (
     <Page title="Checkout Complete">
       <Alert
