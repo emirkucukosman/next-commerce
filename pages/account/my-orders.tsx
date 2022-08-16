@@ -29,8 +29,14 @@ const MyOrders: NextPage<MyOrdersProps> = ({ orders }) => {
 };
 
 export const getServerSideProps = async (context: GetServerSidePropsContext) => {
+  // Determine cookie name
+  const cookieName =
+    process.env.NODE_ENV === "production"
+      ? "__Secure-next-auth.session-token"
+      : "next-auth.session-token";
+
   // Check if session token cookie is set
-  const sessionToken = context.req.cookies["next-auth.session-token"];
+  const sessionToken = context.req.cookies[cookieName];
   if (!sessionToken) {
     return {
       props: {
