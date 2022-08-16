@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id    Int     @id @default(autoincrement())
+  title String
+  manufacturer  String
+  description  String
+  image  String
+  price  Float
+  rating  Int  @default(0)
+  stripeId  String?
+  categories  ProductCategory[]  
+  orderProducts  OrderProduct[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model OrderProduct {
+  id    Int     @id @default(autoincrement())
+  productId Int
+  orderId Int  
+  quantity  Int
+  product  Product @relation(fields: [productId], references: [id])
+  order  Order  @relation(fields: [orderId], references: [id])
+}
+
+model Cateogry {
+  id    Int     @id @default(autoincrement())
+  title String
+  slug  String
+  products  ProductCategory[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model ProductCategory {
+  product Product @relation(fields: [productId], references: [id])
+  productId Int
+  category Cateogry @relation(fields: [categoryId], references: [id])
+  categoryId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@id([productId, categoryId])
+}
+
+model Order {
+  id    Int     @id @default(autoincrement())
+  paymentIntentId  String?
+  isVerified  Boolean @default(false)
+  user  User @relation(fields: [userId], references: [id])
+  userId String
+  products  OrderProduct[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
